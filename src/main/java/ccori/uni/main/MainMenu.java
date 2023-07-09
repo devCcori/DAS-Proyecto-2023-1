@@ -12,6 +12,9 @@ package ccori.uni.main;
 import ccori.uni.compras.Compras_Main;
 import ccori.uni.cocina.Carrete;
 import ccori.uni.pdv.PdV_Main;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import javax.swing.JFrame;
 
 public class MainMenu extends javax.swing.JFrame {
 
@@ -20,6 +23,14 @@ public class MainMenu extends javax.swing.JFrame {
      */
     public MainMenu() {
         initComponents();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                
+        addWindowListener(new WindowAdapter(){
+            @Override
+            public void windowClosing(WindowEvent e){
+                dispose();
+            }
+        });
     }
 
     /**

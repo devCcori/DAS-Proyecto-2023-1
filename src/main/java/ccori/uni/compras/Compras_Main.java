@@ -57,6 +57,13 @@ public class Compras_Main extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
         jScrollPane1.setViewportView(jTable1);
+        
+        //has que la jTable no sea editable pero si seleccionable
+        jTable1.setDefaultEditor(Object.class, null);
+        jTable1.setRowSelectionAllowed(true);
+        jTable1.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(jTable1);
+
 
         btnNew.setText("Nueva Compra");
         btnNew.addActionListener(this::btnNewActionPerformed);
