@@ -2,22 +2,14 @@
 USE master
 go
 
-
-
 DROP DATABASE FastFood
 go
-
-
 
 CREATE DATABASE FastFood
 go
 
-
-
 USE FastFood
 go
-
-
 
 CREATE TABLE Carrete_Pedidos
 ( 
@@ -31,6 +23,23 @@ go
 
 ALTER TABLE Carrete_Pedidos
 	ADD CONSTRAINT XPKCarrete_Pedidos PRIMARY KEY  CLUSTERED (ID_Venta ASC)
+go
+
+
+
+CREATE TABLE Cliente
+( 
+	ID_Cliente           varchar(20)  NOT NULL ,
+	Nombre               char(18)  NOT NULL ,
+	Apellido             char(18)  NULL ,
+	Cumpleaños           datetime  NULL 
+)
+go
+
+
+
+ALTER TABLE Cliente
+	ADD CONSTRAINT XPKCliente PRIMARY KEY  CLUSTERED (ID_Cliente ASC)
 go
 
 
@@ -104,7 +113,7 @@ CREATE TABLE Productos
 	Nombre_Producto      varchar(20)  NOT NULL ,
 	Costo                decimal(10,2)  NOT NULL ,
 	Precio_Venta         decimal(10,2)  NOT NULL ,
-	Stock                decimal(10,2)  NULL ,
+	Stock                decimal(10,2)  NULL 
 )
 go
 
@@ -160,7 +169,8 @@ CREATE TABLE Ventas
 	TimeStamp            datetime2(0)  NOT NULL ,
 	ID_Empleado          varchar(20)  NOT NULL ,
 	Total                decimal(10,2)  NOT NULL ,
-	Metodo_pago          varchar(20)  NOT NULL 
+	Metodo_pago          varchar(20)  NOT NULL ,
+	ID_Cliente           varchar(20)  NOT NULL 
 )
 go
 
@@ -240,6 +250,15 @@ go
 
 ALTER TABLE Ventas
 	ADD CONSTRAINT R_22 FOREIGN KEY (ID_Empleado) REFERENCES Empleados(ID_Empleado)
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+
+
+
+ALTER TABLE Ventas
+	ADD CONSTRAINT R_34 FOREIGN KEY (ID_Cliente) REFERENCES Cliente(ID_Cliente)
 		ON DELETE NO ACTION
 		ON UPDATE NO ACTION
 go
