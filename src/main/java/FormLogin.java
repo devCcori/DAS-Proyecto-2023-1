@@ -48,10 +48,8 @@ public class FormLogin extends javax.swing.JFrame {
         jTextField2.setText("jTextField1");
 
         button1.setLabel("button1");
-        button1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button1ActionPerformed(evt);
-            }
+        button1.addActionListener((java.awt.event.ActionEvent evt) -> {
+            button1ActionPerformed(evt);
         });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -95,24 +93,18 @@ public class FormLogin extends javax.swing.JFrame {
 
     private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
         // TODO add your handling code here:
-        try {
-        // Establecer la conexión a la base de datos
-        Connection connection = DriverManager.getConnection("jdbc:sqlserver://localhost;databaseName=devCcori;integratedSecurity=true;");
-
-        // Verificar si la conexión fue exitosa
-        if (connection != null) {
-            // La conexión se realizó correctamente
-            JOptionPane.showMessageDialog(this, "Conexión exitosa");
-        } else {
-            // La conexión falló
+        try (Connection connection = DriverManager.getConnection("jdbc:sqlserver://localhost;databaseName=devCcori;integratedSecurity=true;")){
+                if (connection != null) {
+                    JOptionPane.showMessageDialog(this, "Conexión exitosa");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error al conectar", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error al conectar", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-
-        // Cerrar la conexión
-        connection.close();
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
+            System.out.println(e.getMessage());
+        } finally {
+            System.out.println("Conexión finalizada");            
+            }
     }//GEN-LAST:event_button1ActionPerformed
 
     /**

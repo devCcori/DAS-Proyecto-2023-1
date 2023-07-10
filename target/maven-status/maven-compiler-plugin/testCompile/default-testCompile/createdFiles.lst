@@ -1,2 +1,4 @@
+test\pdv\testIDResetas.class
+test\pdv\ticketGenerationTest.class
 test\compraUtils\compraUtilsTest.class
 test\db\dbConnection.class

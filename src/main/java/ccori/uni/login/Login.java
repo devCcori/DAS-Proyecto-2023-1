@@ -10,9 +10,11 @@ package ccori.uni.login;
  */
 
 import javax.swing.JOptionPane;
+
 import ccori.uni.main.MainMenu;
-import java.sql.*;
 import ccori.uni.dbUtils.sqlConnection;
+
+import java.sql.*;
 
 public class Login extends javax.swing.JFrame {
 
@@ -100,8 +102,7 @@ public class Login extends javax.swing.JFrame {
         String username = txtUser.getText();
         String password = new String(txtPass.getPassword());
            
-        Connection cn = null;
-        
+        Connection cn = null;  
         try {
             // Inicio de TX
             cn = sqlConnection.getConnection();
@@ -163,8 +164,11 @@ public class Login extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Login().setVisible(true);
-            }
+                //crea un new Login el cual este centrado:
+                Login login = new Login();
+                login.setLocationRelativeTo(null);
+                login.setVisible(true);
+                }
         });
     }
 

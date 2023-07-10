@@ -11,10 +11,13 @@ package ccori.uni.main;
 
 import ccori.uni.compras.Compras_Main;
 import ccori.uni.cocina.Carrete;
-import ccori.uni.pdv.PdV_Main;
+import ccori.uni.pdv.idSeler;
+
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 public class MainMenu extends javax.swing.JFrame {
 
@@ -135,19 +138,30 @@ public class MainMenu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExitActionPerformed
-        System.exit(0);
+        //genera un mensaje de confirmacion para salir del programa
+        int dialogButton = JOptionPane.YES_NO_OPTION;
+        int result = JOptionPane.showConfirmDialog(null, "¿Desea salir del programa?", "Salir", dialogButton);
+        if (result == JOptionPane.YES_OPTION) {
+            System.exit(0);
+        }
     }//GEN-LAST:event_btnExitActionPerformed
 
     private void btnCombrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCombrasActionPerformed
-        new Compras_Main().setVisible(true);
+        Compras_Main cm = new Compras_Main();
+        cm.setLocationRelativeTo(null);
+        cm.setVisible(true);
     }//GEN-LAST:event_btnCombrasActionPerformed
 
     private void btnCocinaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCocinaActionPerformed
-        new Carrete().setVisible(true);
+        Carrete ca = new Carrete();
+        ca.setLocationRelativeTo(null);
+        ca.setVisible(true);
     }//GEN-LAST:event_btnCocinaActionPerformed
 
     private void btnPdVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPdVActionPerformed
-        new PdV_Main().setVisible(true);
+        idSeler ids = new idSeler();
+        ids.setLocationRelativeTo(null);
+        ids.setVisible(true);
     }//GEN-LAST:event_btnPdVActionPerformed
 
     /**

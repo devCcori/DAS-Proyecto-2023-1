@@ -77,7 +77,6 @@ public class compraUtils {
             }
         }
     }
-    //
 
     //actualiza el valor del stock agregando la cantidad de productos comprados:
     public static void updateStock(String codProducto, String cantidad) throws SQLException {

@@ -16,9 +16,11 @@ import java.sql.SQLException;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
+import ccori.uni.dbUtils.carreteUtils;
 import ccori.uni.dbUtils.showTable;
 
 public class Carrete extends javax.swing.JFrame {
@@ -36,7 +38,25 @@ public class Carrete extends javax.swing.JFrame {
                 dispose();
             }
         });
-    }
+        //agrega un listener cuadno se cambia la ultima columna del jTable:
+        jTable1.getModel().addTableModelListener(e -> {
+            int row = e.getFirstRow();
+            int column = e.getColumn();
+            String estado = jTable1.getValueAt(row, 2).toString();
+            String id = jTable1.getValueAt(row, 0).toString();
+            if (column == 2){
+                try {
+                    carreteUtils.updateEstado(id, estado);
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Error al actualizar el estado de la venta");
+                }
+            }
+        }
+    );
+}
+
+    
 
     /**
      * This method is called from within the constructor to initialize the form.

@@ -14,12 +14,12 @@ import javax.swing.JOptionPane;
 import ccori.uni.dbUtils.showTable;
 
 
-public class Proveedores extends javax.swing.JFrame {
+public class Recetas extends javax.swing.JFrame {
 
     /**
      * Creates new form Proveedores
      */
-    public Proveedores() {
+    public Recetas() {
         initComponents();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -29,6 +29,17 @@ public class Proveedores extends javax.swing.JFrame {
                 dispose();
             }
         });
+        try{
+            jTable1.setModel(showTable.getTableModel("Receta"));
+        }catch(SQLException e){
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+        //has que la jTable no sea editable pero si seleccionable
+        jTable1.setDefaultEditor(Object.class, null);
+        jTable1.setRowSelectionAllowed(true);
+        jTable1.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(jTable1);
 
         // Agregar el MouseListener al jTable1 en el constructor
         jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -36,7 +47,7 @@ public class Proveedores extends javax.swing.JFrame {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 if (evt.getClickCount() == 2 && !evt.isConsumed()) {
                     evt.consume();
-                    getSelectedRowData();
+                    //getSelectedRowData();
                     dispose();
                 }
             }
@@ -57,18 +68,17 @@ public class Proveedores extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        try {
-            jTable1.setModel(showTable.getTableModel("Proveedores"));
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error al cargar los datos de los proveedores.", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-
-        //has que la jTable no sea editable pero si seleccionable
-        jTable1.setDefaultEditor(Object.class, null);
-        jTable1.setRowSelectionAllowed(true);
-        jTable1.getTableHeader().setReorderingAllowed(false);
-        
-
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
         jScrollPane1.setViewportView(jTable1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -108,15 +118,16 @@ public class Proveedores extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Proveedores.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Recetas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
         
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
-            new Proveedores().setVisible(true);
+            new Recetas().setVisible(true);
         });
     }
 

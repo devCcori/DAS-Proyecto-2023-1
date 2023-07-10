@@ -32,7 +32,7 @@ CREATE TABLE Cliente
 	ID_Cliente           varchar(20)  NOT NULL ,
 	Nombre               char(18)  NOT NULL ,
 	Apellido             char(18)  NULL ,
-	Cumpleaños           datetime  NULL 
+	CumpleaÃ±os           datetime  NULL 
 )
 go
 

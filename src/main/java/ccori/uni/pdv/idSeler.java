@@ -10,13 +10,13 @@ package ccori.uni.pdv;
  */
 
 import java.awt.HeadlessException;
-
-import ccori.uni.dbUtils.pdvUtils;
-import ccori.uni.dbUtils.compraUtils;
-
 import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
+
+import ccori.uni.dbUtils.compraUtils;
+import ccori.uni.dbUtils.pdvUtils;
+
 
 
 public class idSeler extends javax.swing.JFrame {
@@ -42,26 +42,34 @@ public class idSeler extends javax.swing.JFrame {
         jTextField1 = new javax.swing.JTextField();
         btnLogin = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
 
         jLabel1.setText("Seleccione su ID:");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
+        try {
+            jComboBox1.setModel(pdvUtils.getComboBoxModel("Empleados", "Id_Empleado"));
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
         jTextField1.setEditable(false);
         jTextField1.setToolTipText("");
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+        jTextField1.addActionListener((java.awt.event.ActionEvent evt) -> {
+            jTextField1ActionPerformed(evt);
+        });
+
+        //crea un accion listerner para cambiar el texto de jTextField1 cuando se cambie el valor de jComboBox1:
+        jComboBox1.addActionListener((java.awt.event.ActionEvent evt) -> {
+            try {
+                jTextField1.setText(compraUtils.getValue("SELECT Nombre FROM Empleados WHERE Id_Empleado = '" + jComboBox1.getSelectedItem() + "'"));
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(idSeler.this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 
         btnLogin.setText("Ingresar");
-        btnLogin.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnLoginActionPerformed(evt);
-            }
+        btnLogin.addActionListener((java.awt.event.ActionEvent evt) -> {
+            btnLoginActionPerformed(evt);
         });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -135,22 +143,20 @@ public class idSeler extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(idSeler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(idSeler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(idSeler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(idSeler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        
+        //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new idSeler().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            idSeler form = new idSeler();
+            
+            //Centrar el formualrio en la pantalla:
+            form.setLocationRelativeTo(null);
+            form.setVisible(true);
         });
     }
 

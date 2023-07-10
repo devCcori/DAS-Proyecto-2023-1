@@ -15,14 +15,20 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.swing.DefaultCellEditor;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.table.TableColumn;
 
 import ccori.uni.data.Empleados;
 import ccori.uni.data.Proveedores;
 import ccori.uni.dbUtils.compraUtils;
+import ccori.uni.dbUtils.pdvUtils;
 import ccori.uni.dbUtils.tableUtils;
+
 
 public class New_Compra extends javax.swing.JFrame {
 
@@ -33,17 +39,72 @@ public class New_Compra extends javax.swing.JFrame {
         initComponents();
         actualizarHora();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                
-        addWindowListener(new WindowAdapter(){
-            @Override
-            public void windowClosing(WindowEvent e){
-                dispose();
+            addWindowListener(new WindowAdapter(){
+                @Override
+                public void windowClosing(WindowEvent e){
+                    dispose();
+                }
+            });
+            
+        //modifica la primera columna del JTable para que se vuelva un combobox qeu obtenga sus opciones de pdvUtils.getComboBoxModel("Productos", "ID_Producto"):
+        JComboBox<String> comboBox = new JComboBox<>();
+        try {
+            comboBox.setModel(pdvUtils.getComboBoxModel("Productos", "ID_Producto"));
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        TableColumn col = tblCompra.getColumnModel().getColumn(0);
+        col.setCellEditor(new DefaultCellEditor(comboBox));
+        //modifica la segunda columna del JTable para que se vuelva un combobox qeu obtenga sus opciones de pdvUtils.getComboBoxModel("Productos", "Nombre_Producto"):
+        JComboBox<String> comboBox2 = new JComboBox<>();
+        try {
+            comboBox2.setModel(pdvUtils.getComboBoxModel("Productos", "Nombre_Producto"));
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        TableColumn col2 = tblCompra.getColumnModel().getColumn(1);
+        col2.setCellEditor(new DefaultCellEditor(comboBox2));
+
+        AtomicBoolean isListenerActive = new AtomicBoolean(false);
+
+        //agrega un listener para cuando la columna 1 o 2 cambien de valor:
+        tblCompra.getModel().addTableModelListener(e -> {
+            if (!isListenerActive.get()) {
+                int row = e.getFirstRow();
+                int column = e.getColumn();
+                Object value = tblCompra.getValueAt(row, column);
+                String stringValue;
+                if (value instanceof String) {
+                    stringValue = (String) value;
+                } else if (value instanceof Double) {
+                    double doubleValue = (double) value;
+                    stringValue = String.valueOf(doubleValue);
+                } else {
+                    stringValue = "";
+                }
+                if (column == 0) {
+                    isListenerActive.set(true);
+                    try {
+                        tblCompra.setValueAt(compraUtils.getValue("SELECT Nombre_Producto FROM Productos WHERE ID_Producto = '" + stringValue + "'"), row, column + 1);
+                    } catch (SQLException e2) {
+                        System.out.println(e2);
+                    }
+                    isListenerActive.set(false);
+                }
+                if (column == 1){
+                    isListenerActive.set(true);
+                    try {
+                        tblCompra.setValueAt(compraUtils.getValue("SELECT ID_Producto FROM Productos WHERE Nombre_Producto = '" + stringValue + "'"), row, column - 1);
+                    } catch (SQLException e2) {
+                        System.out.println(e2);
+                    }
+                    isListenerActive.set(false);
+                }    
             }
         });
-        
-
+        txtIdEmpleado.setEditable(false);
+        txtIdProveedor.setEditable(false);
     }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -135,16 +196,15 @@ public class New_Compra extends javax.swing.JFrame {
                 if (column == 3 || column == 2) { // Cantidad column index
                     Object cantidadValue = getValueAt(row, 2);
                     Object precioValue = getValueAt(row, 3);
-                    Object oldTotal = getValueAt(row, 4);
-                    int oldFloat = 0;
                     if (cantidadValue != null && precioValue != null) {
                         Double cantidad = (Double) cantidadValue;
                         Double precioUnitario = (Double) precioValue;
-                        Double total = cantidad * precioUnitario;
-                        if (oldTotal != null){
-                            oldFloat = (int) oldTotal;
-                        }
-                        super.setValueAt(total, row, 4); // Total column index
+                        Double subtotal = cantidad * precioUnitario;
+                        if (subtotal != 0.0){
+                            super.setValueAt(subtotal, row, 4); // Total column index
+                        }else{
+                            super.setValueAt(0.0, row, 4); // Total column index
+                            }
 
                         // Llena el txtTotal con la suma de la ultima columna de la tabla:
                         Double sum = 0.0;
@@ -156,11 +216,17 @@ public class New_Compra extends javax.swing.JFrame {
                         }
                         txtTotal.setText(sum.toString());
 
-                        if (oldFloat != total) {
+                        //agrega un if que revisa si es que la ultima fila esta vacia, si es asi, no agrega una nueva fila
+                        if (getValueAt(getRowCount() - 1, 0) != null) {
                             addEmptyRow();
                         }
                     } else {
                         super.setValueAt(null, row, 4); // Total column index
+                    }
+                }
+                if (column == 0){
+                    if (getValueAt(row, 4) != null) {
+                        addEmptyRow();
                     }
                 }
 
@@ -324,6 +390,7 @@ public class New_Compra extends javax.swing.JFrame {
                 System.out.println(e);
             }
         }
+        dispose();
 
     }//GEN-LAST:event_btnCpmprarActionPerformed
 
