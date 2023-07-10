@@ -43,29 +43,19 @@ public class idSeler extends javax.swing.JFrame {
         btnLogin = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         jLabel1.setText("Seleccione su ID:");
 
-        try {
-            jComboBox1.setModel(pdvUtils.getComboBoxModel("Empleados", "ID_Empleado"));
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage());
-        }
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        //crea un evento que se ejecuta cuando se selecciona un elemento del combobox:
-        jComboBox1.addActionListener((java.awt.event.ActionEvent evt) -> {
-            //obtiene el valor seleccionado del combobox:
-            String id = jComboBox1.getSelectedItem().toString();
-            String sql = "SELECT Nombre FROM Empleados WHERE ID_Empleado = '" + id + "'";
-            try {
-                jTextField1.setText(compraUtils.getValue(sql));
-            } catch (SQLException e) {
-                JOptionPane.showMessageDialog(null, e.getMessage());
+        jTextField1.setEditable(false);
+        jTextField1.setToolTipText("");
+        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField1ActionPerformed(evt);
             }
         });
-
-
-        jTextField1.setText("jTextField1");
 
         btnLogin.setText("Ingresar");
         btnLogin.addActionListener(new java.awt.event.ActionListener() {
@@ -124,6 +114,10 @@ public class idSeler extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
     }//GEN-LAST:event_btnLoginActionPerformed
+
+    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField1ActionPerformed
 
     /**
      * @param args the command line arguments
