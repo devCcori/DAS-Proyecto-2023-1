@@ -34,6 +34,20 @@ public class Compras_Main extends javax.swing.JFrame {
                 dispose();
             }
         });
+
+        try {
+            jTable1.setModel(showTable.getTableModel("Compra_Total"));
+        } catch (SQLException e){
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+
+        //has que la jTable no sea editable pero si seleccionable
+        jTable1.setDefaultEditor(Object.class, null);
+        jTable1.setRowSelectionAllowed(true);
+        jTable1.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(jTable1);
+
+        btnNew.addActionListener(this::btnNewActionPerformed);
     }
 
     /**
@@ -51,22 +65,23 @@ public class Compras_Main extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        try {
-            jTable1.setModel(showTable.getTableModel("Compra_Total"));
-        } catch (SQLException e){
-            JOptionPane.showMessageDialog(null, e.getMessage());
-        }
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
         jScrollPane1.setViewportView(jTable1);
-        
-        //has que la jTable no sea editable pero si seleccionable
-        jTable1.setDefaultEditor(Object.class, null);
-        jTable1.setRowSelectionAllowed(true);
-        jTable1.getTableHeader().setReorderingAllowed(false);
-        jScrollPane1.setViewportView(jTable1);
-
 
         btnNew.setText("Nueva Compra");
-        btnNew.addActionListener(this::btnNewActionPerformed);
+        btnNew.addActionListener((java.awt.event.ActionEvent evt) -> {
+            btnNewActionPerformed(evt);
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -83,8 +98,8 @@ public class Compras_Main extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(22, 22, 22)
                 .addComponent(btnNew)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(26, 26, 26)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 407, Short.MAX_VALUE))
         );
 
         pack();

@@ -72,7 +72,7 @@ public class Carrete extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         try {
-            DefaultTableModel model = showTable.getTableModel("Carrete_Pedidos");            
+            DefaultTableModel model = showTable.getTopModel("Carrete_Pedidos");            
             jTable1.setModel(model);
         } catch (SQLException e) {
             System.out.println(e);

@@ -8,18 +8,24 @@ package ccori.uni.compras;
  *
  * @author devCcori
  */
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.sql.SQLException;
+
 import java.text.SimpleDateFormat;
+
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.Arrays;
+import java.util.Objects;
+
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import javax.swing.JFrame;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.TableColumn;
 
@@ -39,12 +45,12 @@ public class New_Compra extends javax.swing.JFrame {
         initComponents();
         actualizarHora();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            addWindowListener(new WindowAdapter(){
-                @Override
-                public void windowClosing(WindowEvent e){
-                    dispose();
-                }
-            });
+        addWindowListener(new WindowAdapter(){
+            @Override
+            public void windowClosing(WindowEvent e){
+                dispose();
+            }
+        });
             
         //modifica la primera columna del JTable para que se vuelva un combobox qeu obtenga sus opciones de pdvUtils.getComboBoxModel("Productos", "ID_Producto"):
         JComboBox<String> comboBox = new JComboBox<>();
@@ -68,38 +74,63 @@ public class New_Compra extends javax.swing.JFrame {
         AtomicBoolean isListenerActive = new AtomicBoolean(false);
 
         //agrega un listener para cuando la columna 1 o 2 cambien de valor:
-        tblCompra.getModel().addTableModelListener(e -> {
-            if (!isListenerActive.get()) {
-                int row = e.getFirstRow();
-                int column = e.getColumn();
-                Object value = tblCompra.getValueAt(row, column);
-                String stringValue;
-                if (value instanceof String) {
-                    stringValue = (String) value;
-                } else if (value instanceof Double) {
-                    double doubleValue = (double) value;
-                    stringValue = String.valueOf(doubleValue);
-                } else {
-                    stringValue = "";
-                }
-                if (column == 0) {
-                    isListenerActive.set(true);
-                    try {
-                        tblCompra.setValueAt(compraUtils.getValue("SELECT Nombre_Producto FROM Productos WHERE ID_Producto = '" + stringValue + "'"), row, column + 1);
-                    } catch (SQLException e2) {
-                        System.out.println(e2);
+        tblCompra.getModel().addTableModelListener((var e) -> {
+            //check if last row is not empty:
+            int lastRow = tblCompra.getRowCount() - 1;
+            if (tblCompra.getValueAt(lastRow, 0) != null || tblCompra.getValueAt(lastRow, 1) != null) {
+                if (!isListenerActive.get()) {
+                    int row = e.getFirstRow();
+                    int column = e.getColumn();
+                    Object value = tblCompra.getValueAt(row, column);
+                    String stringValue;
+                    if (value instanceof String) {
+                        stringValue = (String) value;
+                    } else if (value instanceof Double) {
+                        double doubleValue = (double) value;
+                        stringValue = String.valueOf(doubleValue);
+                    } else {
+                        stringValue = "";
                     }
+                    if (column == 0) {
+                        isListenerActive.set(true);
+                        stringValue = tblCompra.getValueAt(row, column).toString();
+                        String precio = "";
+                        double numericValue;
+                        try {
+                            precio = compraUtils.getValue("SELECT Costo FROM Productos WHERE ID_Producto = '" + stringValue +"'");
+                            try {
+                                numericValue = Double.parseDouble(precio);
+                            } catch (NumberFormatException e3) {
+                                numericValue = 0.0;
+                            }
+                            tblCompra.setValueAt(compraUtils.getValue("SELECT Nombre_Producto FROM Productos WHERE ID_Producto = '" + stringValue + "'"), row, column + 1);
+                            tblCompra.setValueAt(numericValue , row, column+2);
+                        } catch (SQLException e2) {
+                            System.out.println(e2);
+                        }
+                    }
+                    if (column == 1){
+                        isListenerActive.set(true);
+                        stringValue = tblCompra.getValueAt(row, column).toString();
+                        String precio = "";
+                        double numericValue;
+                        try {
+                            precio = compraUtils.getValue("SELECT Costo FROM Productos WHERE Nombre_Producto = '" + stringValue +"'");
+                            try {
+                                numericValue = Double.parseDouble(precio);
+                            } catch (NumberFormatException e3) {
+                                numericValue = 0.0;
+                            }
+                            tblCompra.setValueAt(compraUtils.getValue("SELECT ID_Producto FROM Productos WHERE Nombre_Producto = '" + stringValue + "'"), row, column - 1);
+                            tblCompra.setValueAt(numericValue, row, column+1);
+
+                        } catch (SQLException e3) {
+                            System.out.println(e3);
+                        }
+                    }       
+                    tblCompra.changeSelection(row, 3, false, false);
                     isListenerActive.set(false);
                 }
-                if (column == 1){
-                    isListenerActive.set(true);
-                    try {
-                        tblCompra.setValueAt(compraUtils.getValue("SELECT ID_Producto FROM Productos WHERE Nombre_Producto = '" + stringValue + "'"), row, column - 1);
-                    } catch (SQLException e2) {
-                        System.out.println(e2);
-                    }
-                    isListenerActive.set(false);
-                }    
             }
         });
         txtIdEmpleado.setEditable(false);
@@ -127,7 +158,7 @@ public class New_Compra extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblCompra = new javax.swing.JTable();
         txtTotal = new javax.swing.JTextField();
-        btnCpmprar = new javax.swing.JButton();
+        btnComprar = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         txtIdEmpleado = new javax.swing.JTextField();
         btnEmpleado = new javax.swing.JButton();
@@ -141,7 +172,11 @@ public class New_Compra extends javax.swing.JFrame {
         txtIdProveedor.setEditable(false);
 
         btnProveedor.setText("...");
-        btnProveedor.addActionListener(evt -> this.btnProveedorActionPerformed(evt));
+        btnProveedor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnProveedorActionPerformed(evt);
+            }
+        });
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel2.setText("PROVEEDOR");
@@ -167,11 +202,11 @@ public class New_Compra extends javax.swing.JFrame {
                 {null, null, null, null, null}
             },
             new String[]{
-                "ID", "Producto", "Cantidad", "P/U", "Total"
+                "ID", "Producto", "P/U", "Cantidad", "Total"
             }
         ) {
             Class[] types = new Class[]{
-                java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean[]{
                 true, true, true, true, false
@@ -216,21 +251,25 @@ public class New_Compra extends javax.swing.JFrame {
                         }
                         txtTotal.setText(sum.toString());
 
-                        //agrega un if que revisa si es que la ultima fila esta vacia, si es asi, no agrega una nueva fila
-                        if (getValueAt(getRowCount() - 1, 0) != null) {
-                            addEmptyRow();
-                        }
+                        
                     } else {
-                        super.setValueAt(null, row, 4); // Total column index
+                        super.setValueAt(0.0, row, 4); // Total column index
+                    }
+                    //agrega una nueva fila si los valores de la ultima fila en las columnas 0 y 1 no son nulos:
+                    int lastRow = getRowCount() - 1;
+                    if (getValueAt(lastRow, 0) != null && getValueAt(lastRow, 1) != null) {
+                        addEmptyRow();
                     }
                 }
                 if (column == 0){
-                    if (getValueAt(row, 4) != null) {
+                    int lastRow = getRowCount() - 1;
+                    if (getValueAt(lastRow, 4) != null) {
                         addEmptyRow();
                     }
                 }
 
             };
+
 
             // Método para agregar una nueva fila vacía
             private void addEmptyRow() {
@@ -246,9 +285,9 @@ public class New_Compra extends javax.swing.JFrame {
         txtTotal.setEditable(false);
         txtTotal.setText("0.00");
 
-        btnCpmprar.setText("Subir \nCompra");
-        btnCpmprar.addActionListener((java.awt.event.ActionEvent evt) -> {
-            btnCpmprarActionPerformed(evt);
+        btnComprar.setText("Subir \nCompra");
+        btnComprar.addActionListener((java.awt.event.ActionEvent evt) -> {
+            btnComprarActionPerformed(evt);
         });
 
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -299,7 +338,7 @@ public class New_Compra extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 57, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(btnCpmprar)
+                        .addComponent(btnComprar)
                         .addGap(35, 35, 35))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(labelHora, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -321,7 +360,7 @@ public class New_Compra extends javax.swing.JFrame {
                     .addComponent(btnProveedor, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnCpmprar, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnComprar, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(3, 3, 3)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -336,62 +375,71 @@ public class New_Compra extends javax.swing.JFrame {
                             .addComponent(txtTelf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel4))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 451, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 303, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnCpmprarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCpmprarActionPerformed
-        String idCompra = "";
-        String querry = """
-                SELECT ISNULL(Cod_Compra, '') as Cod_Compra 
-                FROM Compra_Total
-                WHERE Fecha = (
-                    SELECT MAX(Fecha) 
-                    FROM Compra_Total
-                )
-                """;
-        try {
-            idCompra = compraUtils.getValue(querry);
-        } catch (SQLException e) {
-            System.out.println(e);
+    private void btnComprarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCpmprarActionPerformed
+        Object[][] datos = tableUtils.getTableData(tblCompra);
+        AtomicBoolean flag = new AtomicBoolean(true);
+        //revisa si datos contiene algun null y deuvleve true si lo contiene:
+        if (Arrays.stream(datos).flatMap(Arrays::stream).anyMatch(Objects::isNull)){
+            JOptionPane.showMessageDialog(null, "No se puede realizar la compra, revise que no haya campos vacios");
+            flag.set(false);
         }
-        if (idCompra.equals("")){
-            idCompra = "C0001";
-        } else {
-            idCompra = "C" + String.format("%04d", Integer.parseInt(idCompra.substring(1, 5)) + 1);
-        }
-        if (txtIdProveedor.getText().equals("") || txtIdEmpleado.getText().equals("")){
-            JOptionPane.showMessageDialog(null, "Seleccione un proveedor y/o un empleado");
-            return;
-        } else {
-            String total = txtTotal.getText();
-            String idProveedor = txtIdProveedor.getText();
-            String idEmpleado = txtIdEmpleado.getText();
-            try {
-                compraUtils.insertCompraTotal(idCompra, total, idProveedor, idEmpleado);
-            } catch (Exception e) {
-                System.out.println(e);
-                JOptionPane.showMessageDialog(null, "Error al insertar en la tabla Compra_Total");
-            } finally {
-                JOptionPane.showMessageDialog(null, "Compra realizada"); 
-            }
         
-            Object[][] datos = tableUtils.getTableData(tblCompra);
+        if (flag.get()){
+            String idCompra = "";
+            String querry = """
+                    SELECT ISNULL(Cod_Compra, '') as Cod_Compra 
+                    FROM Compra_Total
+                    WHERE Fecha = (
+                        SELECT MAX(Fecha) 
+                        FROM Compra_Total
+                    )
+                    """;
             try {
-                compraUtils.insertCompraDetalle(idCompra, datos);
-                System.out.println("Compra realizada");
-                dispose();
+                idCompra = compraUtils.getValue(querry);
             } catch (SQLException e) {
                 System.out.println(e);
             }
+            if (idCompra.equals("")){
+                idCompra = "C0001";
+            } else {
+                idCompra = "C" + String.format("%04d", Integer.parseInt(idCompra.substring(1, 5)) + 1);
+            }
+            if (txtIdProveedor.getText().equals("") || txtIdEmpleado.getText().equals("")){
+                JOptionPane.showMessageDialog(null, "Seleccione un proveedor y/o un empleado");
+                return;
+            } else if(true){
+                String total = txtTotal.getText();
+                String idProveedor = txtIdProveedor.getText();
+                String idEmpleado = txtIdEmpleado.getText();
+                try {
+                    compraUtils.insertCompraTotal(idCompra, total, idProveedor, idEmpleado);
+                } catch (SQLException e) {
+                    System.out.println(e);
+                    JOptionPane.showMessageDialog(null, "Error al insertar en la tabla Compra_Total");
+                } finally {
+                    JOptionPane.showMessageDialog(null, "Compra realizada"); 
+                }
+            
+                try {
+                    compraUtils.insertCompraDetalle(idCompra, datos);
+                    System.out.println("Compra realizada");
+                    dispose();
+                } catch (SQLException e) {
+                    System.out.println(e);
+                    JOptionPane.showMessageDialog(null, "Error al insertar en la tabla Compra_Detalle");
+                }
+            }
+            dispose();
         }
-        dispose();
-
     }//GEN-LAST:event_btnCpmprarActionPerformed
 
     private void btnEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEmpleadoActionPerformed
@@ -478,7 +526,7 @@ public class New_Compra extends javax.swing.JFrame {
     }   
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnCpmprar;
+    private javax.swing.JButton btnComprar;
     private javax.swing.JButton btnEmpleado;
     private javax.swing.JButton btnProveedor;
     private javax.swing.JLabel jLabel1;

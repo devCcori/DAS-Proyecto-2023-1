@@ -46,5 +46,29 @@ public class showTable {
             return model;
       }
 
-    //si tienes una string hola_mundo quiero que devuelva "Hola Mundo":
+    //define una funcion que obtiene los datos de una tabla y los nombres de las columnas de la misma tabla y devuelve un TableModel, usando la funcion getConnection del archivo sqlConnection.java, y usando un bd sql server:
+    public static javax.swing.table.DefaultTableModel getTopModel(String tableName) throws SQLException {
+        javax.swing.table.DefaultTableModel model;
+        try (
+                  Connection cn = sqlConnection.getConnection();
+                  Statement st = cn.createStatement();
+                  ResultSet rs = st.executeQuery("SELECT TOP 50 * FROM " + tableName + " WHERE Estado != 'Entregado' ORDER BY ID_Venta DESC")
+            )
+            {
+                  ResultSetMetaData rsmd = rs.getMetaData();
+                  int numberOfColumns = rsmd.getColumnCount();
+                  model = new javax.swing.table.DefaultTableModel();
+                  for (int i = 1; i <= numberOfColumns; i++) {
+                        model.addColumn(rsmd.getColumnLabel(i).replace("_", " "));
+                  }
+                  while (rs.next()) {
+                        Object[] rowData = new Object[numberOfColumns];
+                        for (int i = 0; i < rowData.length; i++) {
+                              rowData[i] = rs.getObject(i + 1);
+                        }
+                        model.addRow(rowData);
+                  }
+            }
+            return model;
+      }
 }

@@ -136,12 +136,16 @@ public class compraUtils {
             cn.setAutoCommit(false);
             String sql = "INSERT INTO Compra_Detalle VALUES (?,?,?,?,?)";
             ps = cn.prepareStatement(sql);
-            for (Object[] data1 : data) {            
-                ps.setString(1, idCompra);
-                ps.setString(2, data1[0].toString());
-                ps.setString(3, data1[2].toString());
-                ps.setString(4, data1[3].toString());
-                ps.setString(5, data1[4].toString());
+            for (Object[] data1 : data) { 
+                String idProducto = data1[0].toString();
+                String precioUnitario = data1[2].toString();
+                String cantidad = data1[3].toString();
+                String total = data1[4].toString();
+                ps.setString(1, idProducto);
+                ps.setString(2, cantidad);
+                ps.setString(3, precioUnitario);
+                ps.setString(4, total);
+                ps.setString(5, idCompra);
                 ps.executeUpdate();
             }
             cn.commit();
