@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+
 import javax.swing.JFrame;
 
 import javax.swing.DefaultCellEditor;
@@ -422,23 +423,29 @@ public class New_Compra extends javax.swing.JFrame {
                 String idEmpleado = txtIdEmpleado.getText();
                 try {
                     compraUtils.insertCompraTotal(idCompra, total, idProveedor, idEmpleado);
+                    JOptionPane.showMessageDialog(null, "Compra realizada"); 
                 } catch (SQLException e) {
                     System.out.println(e);
                     JOptionPane.showMessageDialog(null, "Error al insertar en la tabla Compra_Total");
-                } finally {
-                    JOptionPane.showMessageDialog(null, "Compra realizada"); 
                 }
             
                 try {
                     compraUtils.insertCompraDetalle(idCompra, datos);
                     System.out.println("Compra realizada");
-                    dispose();
                 } catch (SQLException e) {
                     System.out.println(e);
                     JOptionPane.showMessageDialog(null, "Error al insertar en la tabla Compra_Detalle");
                 }
+                try {
+                    compraUtils.updateStockFromCompraDetalle(idCompra);
+                    System.out.println("Stock actualizado");
+                    JOptionPane.showMessageDialog(null, "Stock actualizado");
+                } catch (SQLException e) {
+                    System.out.println(e);
+                    JOptionPane.showMessageDialog(null, "Error al actualizar el stock");
+                    dispose();
+                }
             }
-            dispose();
         }
     }//GEN-LAST:event_btnCpmprarActionPerformed
 

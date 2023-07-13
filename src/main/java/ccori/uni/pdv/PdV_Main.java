@@ -33,6 +33,7 @@ import javax.swing.table.DefaultTableModel;
 
 import ccori.uni.dbUtils.pdvUtils;
 import ccori.uni.data.Recetas;
+import ccori.uni.dbUtils.compraUtils;
 
 public class PdV_Main extends javax.swing.JFrame {
 
@@ -367,6 +368,11 @@ public class PdV_Main extends javax.swing.JFrame {
         } catch (Exception e) {
             System.err.println("Error al subir venta");
             System.err.println(e.getMessage());
+        }
+
+        try {
+            pdvUtils.restarStock(data);
+        } catch (Exception e) {
         }
 
         try{

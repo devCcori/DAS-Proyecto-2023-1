@@ -314,4 +314,37 @@ public class pdvUtils {
                   }
             }
       }      
+
+      //funcion que resta el stock de los productos pertenecientes a las recetas vendidas en la venta, donde los productos se obtienen de la tabla Receta_Insumo y se resta de la tabla Producto:
+      public static void restarStock(String[][] data) throws Exception {
+            Connection cn = sqlConnection.getConnection();
+            PreparedStatement ps = null;
+            try {
+                  cn.setAutoCommit(false);
+                  String[] idRecetas = getIDRecetas(data[0]);
+                  String sql = "UPDATE Producto SET Stock = Stock - ? WHERE ID_Producto = ?";
+                  ps = cn.prepareStatement(sql);
+                  for (String[] data1: data){
+                        double value = Double.parseDouble(data1[1]);
+                        int intValue = (int) value;
+                        ps.setInt(1, intValue);
+                        ps.setString(2, data1[0]);
+                  }
+                  for (String idReceta1: idRecetas){
+                        ps.setString(4, idReceta1);
+                  }
+                  ps.executeUpdate();
+                  cn.commit();
+            } catch (SQLException e) {
+                  cn.rollback();
+                  throw e;
+            } finally {
+                  if (ps != null) {
+                        ps.close();
+                  }
+                  if (cn != null) {
+                        cn.close();
+                  }
+            }
+      }
 }

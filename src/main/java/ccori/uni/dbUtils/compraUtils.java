@@ -161,4 +161,29 @@ public class compraUtils {
             }
         }
     }
+
+    //funcion que actualiza el stock en la tabla producto, desde compra_detalle:
+    public static void updateStockFromCompraDetalle(String idCompra) throws SQLException {
+        Connection cn = sqlConnection.getConnection();
+        PreparedStatement ps = null;
+        try {
+            cn.setAutoCommit(false);
+            String sql = "UPDATE Productos SET Stock = Stock + (SELECT Cantidad FROM Compra_Detalle WHERE ID_Producto = Productos.ID_Producto AND Cod_Compra = ?) WHERE Productos.ID_Producto IN (SELECT ID_Producto FROM Compra_Detalle WHERE Cod_Compra = ?)";
+            ps = cn.prepareStatement(sql);
+            ps.setString(1, idCompra);
+            ps.setString(2, idCompra);
+            ps.executeUpdate();
+            cn.commit();
+        } catch (SQLException e) {
+            cn.rollback();
+            throw e;
+        } finally {
+            if (ps != null) {
+                ps.close();
+            }
+            if (cn != null) {
+                cn.close();
+            }
+        }
+    }
 }
