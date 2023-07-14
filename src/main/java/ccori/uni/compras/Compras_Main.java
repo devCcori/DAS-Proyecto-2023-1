@@ -112,7 +112,7 @@ public class Compras_Main extends javax.swing.JFrame {
         new_Compra.addWindowListener(new java.awt.event.WindowAdapter(){
             @Override
             public void windowClosed(java.awt.event.WindowEvent windowEvent){
-                try {
+                try {   
                     jTable1.setModel(showTable.getTableModel("Compra_Total"));
                 } catch (SQLException ex) {
                     JOptionPane.showMessageDialog(null, ex.getMessage());

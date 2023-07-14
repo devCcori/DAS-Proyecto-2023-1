@@ -9,6 +9,8 @@ package ccori.uni.main;
  * @author devCcori
  */
 
+import ccori.uni.insumos.Inventario;
+import ccori.uni.dashboard.dashboard_main;
 import ccori.uni.compras.Compras_Main;
 import ccori.uni.cocina.Carrete;
 import ccori.uni.pdv.idSeler;
@@ -18,6 +20,7 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+
 
 public class MainMenu extends javax.swing.JFrame {
 
@@ -70,8 +73,12 @@ public class MainMenu extends javax.swing.JFrame {
             }
         });
 
-        jButton3.setText("jButton1");
-        jButton3.setEnabled(false);
+        jButton3.setText("Balanze");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         btnCocina.setText("Cocina");
         btnCocina.addActionListener(new java.awt.event.ActionListener() {
@@ -83,8 +90,12 @@ public class MainMenu extends javax.swing.JFrame {
         jButton5.setText("jButton1");
         jButton5.setEnabled(false);
 
-        jButton6.setText("jButton1");
-        jButton6.setEnabled(false);
+        jButton6.setText("Inventario");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
 
         btnExit.setText("Salir");
         btnExit.addActionListener(new java.awt.event.ActionListener() {
@@ -108,7 +119,7 @@ public class MainMenu extends javax.swing.JFrame {
                     .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnPdV, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(76, Short.MAX_VALUE))
+                .addContainerGap(71, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnExit, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -163,6 +174,18 @@ public class MainMenu extends javax.swing.JFrame {
         ids.setLocationRelativeTo(null);
         ids.setVisible(true);
     }//GEN-LAST:event_btnPdVActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        dashboard_main dm = new dashboard_main();
+        dm.setLocationRelativeTo(null);
+        dm.setVisible(true);
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        Inventario in = new Inventario();
+        in.setLocationRelativeTo(null);
+        in.setVisible(true);
+    }//GEN-LAST:event_jButton6ActionPerformed
 
     /**
      * @param args the command line arguments
